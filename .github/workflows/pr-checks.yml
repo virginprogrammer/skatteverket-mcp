@@ -1,0 +1,154 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  validate-pr:
+    name: Validate Pull Request
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Check PR title
+      uses: amannn/action-semantic-pull-request@v5
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        types: |
+          feat
+          fix
+          docs
+          style
+          refactor
+          perf
+          test
+          build
+          ci
+          chore
+          revert
+        requireScope: false
+      continue-on-error: true
+
+    - name: Check for merge conflicts
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        if git merge-tree $(git merge-base HEAD origin/${{ github.base_ref }}) HEAD origin/${{ github.base_ref }} | grep -q "<<<<<"; then
+          echo "❌ Merge conflicts detected"
+          exit 1
+        else
+          echo "✅ No merge conflicts"
+        fi
+
+    - name: Check file sizes
+      run: |
+        echo "Checking for large files..."
+        large_files=$(find . -type f -size +5M -not -path "*/\.*" -not -path "*/bin/*" -not -path "*/obj/*")
+        if [ -n "$large_files" ]; then
+          echo "⚠️ Large files detected (>5MB):"
+          echo "$large_files"
+        else
+          echo "✅ No large files detected"
+        fi
+
+  lint-csharp:
+    name: Lint C# Code
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore SkatteverketMcpServer.sln
+
+    - name: Check code formatting
+      run: |
+        dotnet format SkatteverketMcpServer.sln --verify-no-changes --verbosity diagnostic || {
+          echo "❌ Code formatting issues detected. Run 'dotnet format' locally to fix."
+          exit 1
+        }
+
+    - name: Analyze code
+      run: dotnet build SkatteverketMcpServer.sln --configuration Release /p:TreatWarningsAsErrors=false /p:WarningLevel=4
+
+  dependency-check:
+    name: Check Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Check for vulnerable packages
+      run: |
+        dotnet list package --vulnerable --include-transitive 2>&1 | tee vulnerable.txt
+        if grep -i "has the following vulnerable packages" vulnerable.txt; then
+          echo "⚠️ Vulnerable packages detected"
+          cat vulnerable.txt
+          exit 1
+        else
+          echo "✅ No vulnerable packages detected"
+        fi
+
+    - name: Check for deprecated packages
+      run: |
+        dotnet list package --deprecated 2>&1 | tee deprecated.txt
+        if grep -i "deprecated" deprecated.txt; then
+          echo "⚠️ Deprecated packages detected"
+          cat deprecated.txt
+        else
+          echo "✅ No deprecated packages detected"
+        fi
+
+  test-build-matrix:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Restore dependencies
+      run: dotnet restore SkatteverketMcpServer.sln
+
+    - name: Build
+      run: dotnet build SkatteverketMcpServer.sln --configuration Release --no-restore
+
+    - name: Test
+      run: dotnet test SkatteverketMcpServer.sln --configuration Release --no-build --verbosity normal
+
+    - name: Build summary
+      if: always()
+      run: |
+        echo "### Build Result on ${{ matrix.os }}" >> $GITHUB_STEP_SUMMARY
+        echo "- Status: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- .NET Version: ${{ env.DOTNET_VERSION }}" >> $GITHUB_STEP_SUMMARY

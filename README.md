@@ -1,5 +1,10 @@
 # Skatteverket MCP Server
 
+[![CI/CD](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/ci.yml)
+[![PR Checks](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/pr-checks.yml)
+[![.NET Version](https://img.shields.io/badge/.NET-8.0-512BD4)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 A Model Context Protocol (MCP) server implementation in C# that exposes Swedish Tax Authority (Skatteverket) VAT declaration functionality to LLM applications via JSON-RPC 2.0.
 
 ## Overview
@@ -268,13 +273,43 @@ Enable verbose logging by setting environment variable:
 export Serilog__MinimumLevel__Default=Debug
 ```
 
+## CI/CD
+
+This project uses GitHub Actions for continuous integration and deployment:
+
+- **CI/CD Pipeline**: Builds, tests, and creates artifacts on every push/PR
+- **PR Checks**: Validates code quality, formatting, and dependencies
+- **Release Automation**: Creates releases with platform-specific binaries
+- **Dependabot**: Automatically updates dependencies weekly
+
+See [CI/CD Documentation](docs/CI_CD.md) for detailed information.
+
+### Build Status
+
+| Workflow | Status |
+|----------|--------|
+| CI/CD Pipeline | [![CI/CD](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/ci.yml) |
+| PR Checks | [![PR Checks](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/pr-checks.yml/badge.svg)](https://github.com/virginprogrammer/skatteverket-mcp/actions/workflows/pr-checks.yml) |
+
 ## Contributing
 
+We welcome contributions! Please follow these steps:
+
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes following the code style
+4. Run tests locally: `dotnet test`
+5. Format code: `dotnet format`
+6. Commit using semantic commit messages (`feat:`, `fix:`, `docs:`, etc.)
+7. Push to your fork and submit a pull request
+
+**Before submitting:**
+- ✅ All tests pass
+- ✅ Code is formatted (`dotnet format`)
+- ✅ No build warnings
+- ✅ Documentation is updated
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines (if available).
 
 ## License
 

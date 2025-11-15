@@ -1,0 +1,24 @@
+# Code owners for Skatteverket MCP Server
+# These owners will be automatically requested for review when someone opens a PR
+
+# Default owners for everything in the repo
+*       @virginprogrammer
+
+# Workflow and CI/CD changes
+/.github/       @virginprogrammer
+
+# Core MCP server implementation
+/src/SkatteverketMcpServer/McpServer.cs         @virginprogrammer
+/src/SkatteverketMcpServer/Transport/           @virginprogrammer
+
+# API client and services
+/src/SkatteverketMcpServer/Services/            @virginprogrammer
+
+# Documentation
+*.md            @virginprogrammer
+/docs/          @virginprogrammer
+
+# Configuration files
+*.json          @virginprogrammer
+*.yml           @virginprogrammer
+*.yaml          @virginprogrammer

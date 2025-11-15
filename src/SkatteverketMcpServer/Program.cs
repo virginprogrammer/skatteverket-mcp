@@ -113,11 +113,11 @@ class McpServerHostedService : IHostedService
 
         try
         {
-            _stoppingCts.Cancel();
+            await _stoppingCts.CancelAsync();
         }
         finally
         {
-            await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken));
+            await Task.WhenAny(_executingTask, Task.Delay(Timeout.Infinite, cancellationToken)).ConfigureAwait(false);
         }
     }
 }

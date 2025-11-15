@@ -39,7 +39,7 @@ public class VatDraftToolsTests
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_GetVatDrafts_ShouldCallApiClient()
+    public async Task ExecuteToolAsync_GetVatDrafts_ShouldCallApiClientAsync()
     {
         // Arrange
         var expectedDrafts = new VatDraftListResponse
@@ -71,7 +71,7 @@ public class VatDraftToolsTests
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_GetVatDraft_WithValidArguments_ShouldReturnDraft()
+    public async Task ExecuteToolAsync_GetVatDraft_WithValidArguments_ShouldReturnDraftAsync()
     {
         // Arrange
         var redovisare = "1234567890";
@@ -108,7 +108,7 @@ public class VatDraftToolsTests
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_CreateVatDraft_ShouldCallApiClient()
+    public async Task ExecuteToolAsync_CreateVatDraft_ShouldCallApiClientAsync()
     {
         // Arrange
         var redovisare = "1234567890";
@@ -152,7 +152,7 @@ public class VatDraftToolsTests
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_ValidateVatDraft_ShouldReturnValidationResult()
+    public async Task ExecuteToolAsync_ValidateVatDraft_ShouldReturnValidationResultAsync()
     {
         // Arrange
         var redovisare = "1234567890";
@@ -183,7 +183,7 @@ public class VatDraftToolsTests
     }
 
     [Fact]
-    public async Task ExecuteToolAsync_UnknownTool_ShouldReturnError()
+    public async Task ExecuteToolAsync_UnknownTool_ShouldReturnErrorAsync()
     {
         // Act
         var result = await _tools.ExecuteToolAsync("unknown_tool", null);

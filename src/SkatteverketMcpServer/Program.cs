@@ -10,10 +10,9 @@ using SkatteverketMcpServer.Services;
 using SkatteverketMcpServer.Tools;
 using SkatteverketMcpServer.Transport;
 
-// Configure Serilog for logging to file (stderr to avoid polluting stdio)
+// Configure Serilog for logging to file (avoiding stdout to prevent polluting stdio)
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
-    .WriteTo.Console(standardErrorStream: true)
     .WriteTo.File("logs/skatteverket-mcp-.log", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 

@@ -66,8 +66,8 @@ public class VatPromptsTests
 
         // Assert
         messages.Should().NotBeEmpty();
-        messages[0].Content.Text.Should().Contain("review");
-        messages[0].Content.Text.Should().Contain("validate");
+        messages[0].Content.Text.Should().ContainAny("review", "Review");
+        messages[0].Content.Text.Should().ContainAny("validate", "Validate");
     }
 
     [Fact]

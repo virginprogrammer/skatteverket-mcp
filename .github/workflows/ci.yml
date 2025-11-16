@@ -44,7 +44,7 @@ jobs:
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: test-results
         path: '**/TestResults/**/*.trx'
@@ -52,7 +52,7 @@ jobs:
 
     - name: Upload coverage reports
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: coverage-reports
         path: '**/TestResults/**/coverage.cobertura.xml'
@@ -157,7 +157,7 @@ jobs:
         fi
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: skatteverket-mcp-${{ matrix.runtime }}
         path: |

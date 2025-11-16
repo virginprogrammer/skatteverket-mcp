@@ -413,7 +413,17 @@ public class VatDraftTools
                 ?? throw new ArgumentException($"Failed to deserialize argument: {name}");
         }
 
-        return (T)Convert.ChangeType(value, typeof(T));
+        // Direct cast if types match
+        if (value is T typedValue)
+        {
+            return typedValue;
+        }
+
+        // Handle type conversion
+        var targetType = typeof(T);
+        var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        return (T)Convert.ChangeType(value, underlyingType);
     }
 
     private T? GetOptionalArgument<T>(Dictionary<string, object>? arguments, string name)
@@ -434,6 +444,16 @@ public class VatDraftTools
             return JsonSerializer.Deserialize<T>(element.GetRawText());
         }
 
-        return (T?)Convert.ChangeType(value, typeof(T));
+        // Direct cast if types match
+        if (value is T typedValue)
+        {
+            return typedValue;
+        }
+
+        // Handle type conversion for nullable types
+        var targetType = typeof(T);
+        var underlyingType = Nullable.GetUnderlyingType(targetType) ?? targetType;
+
+        return (T?)Convert.ChangeType(value, underlyingType);
     }
 }
